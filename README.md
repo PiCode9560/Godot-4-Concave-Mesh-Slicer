@@ -1,3 +1,6 @@
+# Godot 4 concave mesh slicer
+![alt text](https://github.com/PiCode9560/Godot-4-Concave-Mesh-Slicer/blob/main/images/Godot%20Mesh%20slicer.png)
+
 # Installing
 Download the files and put the ConcaveMeshSlicer.gd into your project.
 
