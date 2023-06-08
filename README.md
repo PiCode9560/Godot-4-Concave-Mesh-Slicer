@@ -6,6 +6,12 @@ Demo video: https://www.youtube.com/watch?v=_yqTljJ0mW0&t=166s
 
 ![alt text](https://github.com/PiCode9560/Godot-4-Concave-Mesh-Slicer/blob/main/images/Godot%20Mesh%20slicer.png)
 
+
+# Feature
+
+- slice convex, concave and meshes with holes.
+- if your mesh is too complicated, the cross-section surface sometimes not be created.
+
 # Installing
 Download the files and put the ConcaveMeshSlicer.gd into your project.
 
