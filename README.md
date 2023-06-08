@@ -10,7 +10,7 @@ Demo video: https://www.youtube.com/watch?v=_yqTljJ0mW0&t=166s
 # Feature
 
 - slice convex, concave and meshes with holes.
-- if your mesh is too complicated, the cross-section surface sometimes not be created.
+- if your mesh is too complicated, the cross-section surface sometimes not created.
 
 # Installing
 Download the files and put the ConcaveMeshSlicer.gd into your project.
