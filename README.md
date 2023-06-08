@@ -2,6 +2,8 @@
 
 Slicing Concave Mesh Into Half.
 
+Demo video: https://www.youtube.com/watch?v=_yqTljJ0mW0&t=166s
+
 ![alt text](https://github.com/PiCode9560/Godot-4-Concave-Mesh-Slicer/blob/main/images/Godot%20Mesh%20slicer.png)
 
 # Installing
