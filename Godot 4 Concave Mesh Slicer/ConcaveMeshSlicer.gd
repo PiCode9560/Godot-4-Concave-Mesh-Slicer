@@ -26,31 +26,41 @@ func slice_mesh(slice_transform: Transform3D, mesh: Mesh, cross_section_material
 	
 	var normal = -slice_transform.basis.z
 	var at = slice_transform.origin
-	
+
+	#Variables to store values for the first side of the slice.
 	var surfaces1 = []
 	var surfaces_mat1 = []	
-	var surface_tool1_2 := SurfaceTool.new()
+	var surface_tool1_2 := SurfaceTool.new() #Store all of the mesh for the first side.
 	surface_tool1_2.begin(Mesh.PRIMITIVE_TRIANGLES)
+
+	#Variables to store values for the second side of the slice.
 	var surfaces2 = []
 	var surfaces_mat2 = []
-	var surface_tool2_2 := SurfaceTool.new()
+	var surface_tool2_2 := SurfaceTool.new() #Store all of the mesh for the Second side.
 	surface_tool2_2.begin(Mesh.PRIMITIVE_TRIANGLES)
 	vert_slice.clear()
-	
+
+	# Set cross-section material.
 	if cross_section_material == null:
 		if mesh.get_surface_count() != 0:
 			cross_section_material = mesh.surface_get_material(0)
-	
+
+	#Slice the current mesh.
+	#Loop through each surface.
 	for surface_idx in range(mesh.get_surface_count()):
-		mdt.create_from_surface(mesh, surface_idx)
 		
-		var surface_tool := SurfaceTool.new()
+		mdt.create_from_surface(mesh, surface_idx) # Get the surface.
+		
+		var surface_tool := SurfaceTool.new() #Surface tool to create the first side of the sliced
 		surface_tool.begin(Mesh.PRIMITIVE_TRIANGLES)
-		var surface_tool2 := SurfaceTool.new()
+
+		var surface_tool2 := SurfaceTool.new() #Surface tool to create the second side of the sliced
 		surface_tool2.begin(Mesh.PRIMITIVE_TRIANGLES)
-		var verts_side = []
-		var edge_slice = {}
-		var material = mesh.surface_get_material(surface_idx)
+		
+		var verts_side = [] #On what side of the plane the vertices is on.
+		var edge_slice = {} #Store the intersection point of the edges and the plane.
+
+		var material = mesh.surface_get_material(surface_idx) # The current material on the surface.
 
 		# Determine which side of the plane each vertex lies on.
 		for vert in range(mdt.get_vertex_count()):
@@ -60,44 +70,59 @@ func slice_mesh(slice_transform: Transform3D, mesh: Mesh, cross_section_material
 
 		# Find intersections between edges and the slicing plane.
 		for edge in range(mdt.get_edge_count()):
+			#Vertex ID
 			var v1 = mdt.get_edge_vertex(edge, 0)
 			var v2 = mdt.get_edge_vertex(edge, 1)
+			#Vertex Position
 			var v1_at = mdt.get_vertex(v1)
 			var v2_at = mdt.get_vertex(v2)
+
+			# If the vertices of the segment is not on the same side.
 			if verts_side[v1] != verts_side[v2] and verts_side[v2] != 0 and verts_side[v1] != 0:
-				var intersect = _line_plane_intersection(v1_at, v2_at, at, normal)
+				var intersect = _line_plane_intersection(v1_at, v2_at, at, normal) #Get the intersection point of the segment and plane.
 				if intersect != null:
-					if intersect != v2_at and intersect != v1_at:
+					if intersect != v2_at and intersect != v1_at: #Extra checks incase the vertices is on the plane.
+						#Store the new point into edge_slice.
 						var norm = mdt.get_vertex_normal(v2)
 						var uv = mdt.get_vertex_uv(v1) + (mdt.get_vertex_uv(v2) - mdt.get_vertex_uv(v1)) * (v1_at.distance_to(intersect) / v1_at.distance_to(v2_at))
 						edge_slice[edge] = [intersect, norm, uv]
 						
 		# Process faces and determine which side of the plane they belong to.
 		for face in range(mdt.get_face_count()):
-			var face_verts1 = []
-			var face_verts2 = []
+			var face_verts1 = [] #Store faces for first side of the sliced.
+			var face_verts2 = [] #Store faces for second side of the sliced.
 			var edge_intersect = []
+			#Find the edges that has an intersection with the plane.
 			for e in range(3):
 				if edge_slice.has(mdt.get_face_edge(face, e)):
 					edge_intersect.append(e)
+			#If the faces is not intersected with the plane or on the plane.
 			if len(edge_intersect) == 0:
+				#Get the face vertices.
 				var v1 = mdt.get_face_vertex(face, 0)
 				var v2 = mdt.get_face_vertex(face, 1)
 				var v3 = mdt.get_face_vertex(face, 2)
+
+				#Check if the face is on the plane.
 				for v in range(3):
 					var vv1 = mdt.get_vertex(mdt.get_face_vertex(face, v))
 					var vv2 = mdt.get_vertex(mdt.get_face_vertex(face, (v + 1) % 3))
 					if _check_side(vv1, normal, at) == 0 and _check_side(vv2, normal, at) == 0:
+						#If the Edge is on the plane, add it to vert_slice (list of cross-section edges)
 						_add_to_vert_slice(mdt.get_face_vertex(face, v), mdt.get_face_vertex(face, (v + 1) % 3))
 						break
+				#If its not on the plane.
+				#If its on the first side of the plane.
 				if verts_side[v1] + verts_side[v2] + verts_side[v3] > 0:
 					face_verts1.append(v1)
 					face_verts1.append(v2)
 					face_verts1.append(v3)
+				#If its on the second side of the plane.
 				else:
 					face_verts2.append(v1)
 					face_verts2.append(v2)
 					face_verts2.append(v3)
+			# If there is only 1 edge that is intersect with the plane.
 			elif len(edge_intersect) == 1:
 				var v1 = null
 				var v2 = mdt.get_edge_vertex(mdt.get_face_edge(face, edge_intersect[0]), 0)
@@ -125,14 +150,19 @@ func slice_mesh(slice_transform: Transform3D, mesh: Mesh, cross_section_material
 					face_verts1.append(v1)
 					face_verts1.append(v3)
 					face_verts1.append(v4)
+			# If there is only 2 edge that is intersect with the plane.
 			elif len(edge_intersect) == 2:
+				
 				var e1 = mdt.get_face_edge(face, edge_intersect[0])
 				var e2 = mdt.get_face_edge(face, edge_intersect[1])
+
+				
 				var v1 = null
 				var v2 = edge_slice[e2]
 				var v3 = null
 				var v4 = null
 				var v5 = edge_slice[e1]
+
 				var e1v1 = mdt.get_edge_vertex(e1, 0)
 				var e1v2 = mdt.get_edge_vertex(e1, 1)
 				var e2v1 = mdt.get_edge_vertex(e2, 0)
@@ -209,18 +239,25 @@ func slice_mesh(slice_transform: Transform3D, mesh: Mesh, cross_section_material
 		surfaces2.append(surface_tool2.commit())
 		surfaces_mat2.append(material)
 
-	# Sort vertices and create polygons.
+	# Sort cross-section vertices to create surfaces.
 	var sorted_verts = _sort_verts()
+	
+	# Check if surfaces is inside another surfaces
+	# Use set the inner surfaces as a hole of the outer surfaces.
 	sorted_verts = _set_holes(sorted_verts, normal, slice_transform)
 
 	# Create triangles from sorted vertices.
 	for polygon in sorted_verts:
 		var new_polygon = PackedVector2Array()
 
+		#Convert 3D cross-section points to 2d, so it can be triangulate.
 		for vert in polygon:
 			var local = _to_transform_local(slice_transform, vert)
 			new_polygon.append(Vector2(local.z, local.y))
+		#triangulate the surfaces.
 		var triangulate = Geometry2D.triangulate_polygon(new_polygon)
+
+		
 		for v in range(len(triangulate) / 3):
 			var vert1 = polygon[triangulate[v * 3]]
 			var vert2 = polygon[(triangulate[v * 3 + 1]) % len(triangulate)]
@@ -253,14 +290,16 @@ func slice_mesh(slice_transform: Transform3D, mesh: Mesh, cross_section_material
 				surface_tool2_2.add_vertex(vert2)
 				surface_tool2_2.set_uv(_get_uv(slice_transform, vert3))
 				surface_tool2_2.add_vertex(vert3)
-
+	# Commit all of the surfaces.
 	surface_tool1_2.generate_normals()
 	surface_tool2_2.generate_normals()
 	surfaces1.append(surface_tool1_2.commit())
 	surfaces2.append(surface_tool2_2.commit())
+
 	surfaces_mat1.append(cross_section_material)
 	surfaces_mat2.append(cross_section_material)
 
+	#The final mesh for the first side.
 	var new_mesh = ArrayMesh.new()
 
 	for i in range(0, len(surfaces1)):
@@ -268,6 +307,7 @@ func slice_mesh(slice_transform: Transform3D, mesh: Mesh, cross_section_material
 			new_mesh.add_surface_from_arrays(Mesh.PRIMITIVE_TRIANGLES, surfaces1[i].surface_get_arrays(0))
 			new_mesh.surface_set_material(new_mesh.get_surface_count() - 1, surfaces_mat1[i])
 
+	#The final mesh for the second side.
 	var new_mesh2 = ArrayMesh.new()
 
 	for i in range(0, len(surfaces2)):
@@ -292,12 +332,16 @@ func _set_holes(polygons, norm, slice_transform):
 		if len(polygon) > 0:
 			var nearest_intersect_dist = INF
 			var nearest_intersect_polygon = -1
+
+			#Convert the point to 2D
 			var point = _to_transform_local2(slice_transform, polygon[0])
 			point = Vector2(point.x, point.y)
+
 			var is_inside = false
 			
 			# Iterate through all polygons to find the nearest intersecting polygon.
 			for j in range(len(polygons)):
+				#Skip if polygon i and j is the same
 				if j != i:
 					var polygon_check = polygons[j]
 					var polygon2d = []
@@ -307,6 +351,7 @@ func _set_holes(polygons, norm, slice_transform):
 					for k in range(len(polygon_check)):
 						var local_pos = _to_transform_local2(slice_transform, polygon_check[k])
 						var pos2d = Vector2(local_pos.x, local_pos.y)
+
 						local_pos = _to_transform_local2(slice_transform, polygon_check[(k + 1) % len(polygon_check)])
 						var pos2d2 = Vector2(local_pos.x, local_pos.y)
 						polygon2d.append(pos2d)
@@ -447,84 +492,120 @@ func _find_closest_edge(norm1: Vector3, norm2: Vector3, norm_to: Vector3, vert1:
 		else:
 			return 1
 
+#Connect cross-section vertices together to create cross-section surfaces.
 func _sort_verts():
-	var sorted_list = []
-	var list_of_sorted_list = []
-
+	var sorted_list = [] #List of vertices that create a cross-section surface.
+	var list_of_sorted_list = [] #List of cross-section surfaces that has been founded.
+	
+	#Loop though vert_slice to find the next vertex that can connect the begin or end of sorted_list.
 	while len(vert_slice) > 0:
+		#If sorted_list is empty, Add 1 segment (2 connected vertices)
+		#that is not already used in other finished surfaces (list_of_sorted_list).
 		if len(sorted_list) == 0:
 			var has = false
+			#check if the first segment in vert_slice already in list_of_sorted_list.
 			for i in list_of_sorted_list:
 				if _is_in_sorted_list(i, vert_slice[0][0]):
 					has = true
 				if _is_in_sorted_list(i, vert_slice[0][1]):
 					has = true
+			#If not, add the segment to sorted_list.
+			#Remove the segment from vert_slice so it cannot be use again.
 			if not has:
 				sorted_list.append([vert_slice[0][0], false, true])
 				sorted_list.append([vert_slice[0][1], true, false])
 				vert_slice.erase(vert_slice[0])
+			#If yes, remove the segment from vert_slice so it cannot be use again.
 			else:
 				vert_slice.erase(vert_slice[0])
 				continue
 
+		#If sorted_list is not empty.
+		
 		var v_count = len(vert_slice)
-		var closed = false
+		var closed = false #If the segments in sorted_list has looped (connected the end of the list to the beginning.)
 
+		#Loop though vert_slice to find the next vertex that can connect the begin or end of sorted_list.
 		for i in vert_slice:
+			#If the vertices in segment "i" is not in sorted_list
 			if (not _is_in_sorted_list(sorted_list, i[1])) or (not _is_in_sorted_list(sorted_list, i[0])):
+				#Check both end of sorted_list to see if segment "i" can connect to one end of it.
 				for j in range(2):
 					var l = [sorted_list[0], sorted_list[len(sorted_list) - 1]][j]
 
+					#find which one of the vertices is the end and try to connect the segment "i".
 					if l[1] == false or l[2] == false:
+						#If vertex l[0] is the same as vertex i[0].
+						#If yes, try to insert the segments other vertex (i[1]) into sorted_list
 						if l[0] == i[0]:
+							#Check if its already in sorted_list
 							if not _is_in_sorted_list(sorted_list, i[1]):
 								if l[1] == false:
-									sorted_list[j][1] = true
-									sorted_list.insert(j, [i[1], false, true])
-									vert_slice.erase(i)
+									sorted_list[j][1] = true #Mark the vertex at the end of sorted_lisr as connected.
+									sorted_list.insert(j, [i[1], false, true]) #Insert the new segment.
+									vert_slice.erase(i) #Remove the segment from vert_slice so it cannot be use again.
 									break
+						#If vertex l[0] is not the same as vertex i[0].
+						#Then if vertex l[0] is the same as vertex i[1].
+						#If yes, try to insert the segments other vertex (i[0]) into sorted_list
 						elif l[0] == i[1]:
 							if not _is_in_sorted_list(sorted_list, i[0]):
 								if l[1] == false:
-									sorted_list[j][1] = true
-									sorted_list.insert(j, [i[0], false, true])
-									vert_slice.erase(i)
+									sorted_list[j][1] = true #Mark the vertex at the end of sorted_lisr as connected.
+									sorted_list.insert(j, [i[0], false, true]) #Insert the new segment.
+									vert_slice.erase(i) #Remove the segment from vert_slice so it cannot be use again.
 									break
 
+			#If the vertices in segment "i" is in sorted_list
 			else:
-				vert_slice.erase(i)
+				vert_slice.erase(i) #Just remove the segment from vert_slice so it cannot be use again.
 
+			#Check if sorted_list is already looped/closed into a surface.
 			if len(sorted_list) != 0:
-				var srt = sorted_list[sorted_list.size() - 1][0]
-				var srt2 = sorted_list[0][0]
+				var srt = sorted_list[sorted_list.size() - 1][0] #The last segment of sorted_list.
+				var srt2 = sorted_list[0][0] #The first segment of sorted_list.
 
+				#If the segment "i" is connected to the beginning and the end of sorted_list at the same time.
+				#Or if the beginning of the sorted_list is the same as the end.
+				# mark the sorted_list surface as done
 				if i[0] == srt2 and i[1] == srt:
 					closed = true
 					break
 				if i[0] == srt2 and i[1] == srt:
 					closed = true
 					break
+				
 				if srt == srt2:
 					closed = true
 					break
-
+		#If sorted_list surface is finished.
+		#simplify sorted_list (remove the connected info) and add it to list_of_sorted_list.
 		if closed:
 			for i in range(len(sorted_list)):
 				sorted_list[i] = sorted_list[i][0]
 			list_of_sorted_list.append(sorted_list)
 			sorted_list = []
+		#If nothing is insert into the sorted_list,
+		#thats mean the first segment in sorted_list is not connected to anything,
+		#so just clear sorted_list.
 		if v_count == len(vert_slice):
 			sorted_list = []
 	
-	# Convert sorted_list to list_of_sorted_list
+	#simplify sorted_list (remove the connected info) and add it to list_of_sorted_list.
+	#This 3 lines of code is already exist 10 lines above this, idk why it needed these.
 	for i in range(len(sorted_list)):
 		sorted_list[i] = sorted_list[i][0]
 	list_of_sorted_list.append(sorted_list)
+	
+	#Return the surfaces.
 	return list_of_sorted_list
 
+#Get a normal vector of a triangle.
 func _get_triangle_normal(p1: Vector3, p2: Vector3, p3: Vector3):
 	return -Plane(p1, p2, p3).normal
 
+#Check if segment is in sorted_list.
+#Needed for _sort_verts() function.
 func _is_in_sorted_list(sorted_list, value):
 	return sorted_list.has(value)
 
@@ -535,11 +616,13 @@ func _check_side(point: Vector3, normal: Vector3, plane_at: Vector3):
 	var dot = round(normal.dot(relative_pos) * 10000) / 10000
 	return -sign(dot)
 
+#Get UV point for the cross-section material
 func _get_uv(ttransform: Transform3D, pos: Vector3) -> Vector2:
 	var value = _to_transform_local2(ttransform, pos)
 	return Vector2(value.x, value.y)
 
 # Transform a global position to local coordinates
+# There is 2 of these _to_transform_local() functions. Some things needed the other one to work idk why.
 func _to_transform_local(Transform: Transform3D, global_pos: Vector3) -> Vector3:
 	var xform := Transform.affine_inverse()
 	return Vector3(
@@ -549,6 +632,7 @@ func _to_transform_local(Transform: Transform3D, global_pos: Vector3) -> Vector3
 	)
 
 # Transform a global position to local coordinates
+# There is 2 of these _to_transform_local() functions. Some things needed the other one to work idk why.
 func _to_transform_local2(Transform: Transform3D, global_pos: Vector3) -> Vector3:
 	var xform := Transform.affine_inverse()
 	return Vector3(
@@ -557,6 +641,7 @@ func _to_transform_local2(Transform: Transform3D, global_pos: Vector3) -> Vector
 		Transform.basis[2].dot(global_pos) + xform.origin.z
 	)
 
+#find the intersection between a line/segment and a plane.
 func _line_plane_intersection(line_start: Vector3, line_end: Vector3, plane_at: Vector3, plane_norm: Vector3):
 	round(line_start * 10000) / 10000
 	round(line_end * 10000) / 10000
