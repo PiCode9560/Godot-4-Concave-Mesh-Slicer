@@ -87,6 +87,17 @@ func _physics_process(delta):
 				body.center_of_mass_mode = 1
 				body.center_of_mass = body.to_local(meshinstance.to_global(calculate_center_of_mass(meshes[0])))
 
+
+				#recalculate mass
+				var volume1 = calculate_mesh_volume(meshes[0])
+				var volume2 = calculate_mesh_volume(meshes[1])
+				var total_volume = volume1 + volume2
+
+				var mass1 = body.mass * (volume1 / total_volume)
+				var mass2 = body.mass * (volume2 / total_volume)
+
+				body.mass = mass1
+				
 				
 				#second half of the mesh
 				var body2 = body.duplicate()
@@ -94,6 +105,7 @@ func _physics_process(delta):
 				meshinstance = body2.get_node("MeshInstance3D")
 				collision = body2.get_node("CollisionShape3D")
 				meshinstance.mesh = meshes[1]
+				body2.mass = mass2
 				
 				#generate collision
 				if len(meshes[1].get_faces()) > 2:
@@ -147,3 +159,16 @@ func calculate_center_of_mass(mesh:ArrayMesh):
 	if meshVolume == 0:
 		return Vector3.ZERO
 	return temp / meshVolume
+
+func calculate_mesh_volume(mesh: ArrayMesh) -> float:
+	var volume = 0.0
+	for surface in range(mesh.get_surface_count()):
+		var arrays = mesh.surface_get_arrays(surface)
+		var vertices = arrays[Mesh.ARRAY_VERTEX]
+		for i in range(0, vertices.size(), 3):
+			var v1 = vertices[i]
+			var v2 = vertices[i + 1]
+			var v3 = vertices[i + 2]
+			volume += abs(v1.dot(v2.cross(v3))) / 6.0
+	return volume
+
