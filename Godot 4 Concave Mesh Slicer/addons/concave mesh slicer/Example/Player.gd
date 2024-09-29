@@ -10,12 +10,15 @@ const MOUSE_SENSITIVITY = 0.005
 @onready var slicer = $Camera3D/Slicer
 
 var meshSlicer = MeshSlicer.new()
-var cross_section_material = preload("res://Example/cross_section_material.tres")
+
+var cross_section_material = preload("res://addons/concave mesh slicer/Example/cross_section_material.tres")
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 
-
+func _ready() -> void:
+	# The Node need to be in a tree for it to worked.
+	add_child(meshSlicer)
 
 func _physics_process(delta):
 	# Add the gravity player.
@@ -45,7 +48,8 @@ func _physics_process(delta):
 		for j in collision.get_collision_count():
 			var obj = collision.get_collider(j)
 			if obj is RigidBody3D:
-				obj.apply_central_impulse(position.direction_to(obj.position)/2)
+				print("COLLIDE ",direction)
+				obj.apply_force(direction*10,collision.get_position(j)-obj.position)
 
 
 		
@@ -71,7 +75,6 @@ func _physics_process(delta):
 				
 				#Slice the mesh
 				var meshes = meshSlicer.slice_mesh(Transform,meshinstance.mesh,cross_section_material)
-				
 
 				meshinstance.mesh = meshes[0]
 				
@@ -171,4 +174,3 @@ func calculate_mesh_volume(mesh: ArrayMesh) -> float:
 			var v3 = vertices[i + 2]
 			volume += abs(v1.dot(v2.cross(v3))) / 6.0
 	return volume
-

@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cbpc21w65hx8w"
-path.s3tc="res://.godot/imported/DonutTop.png-30a278ed1d70152bb61bb2ed06d2935d.s3tc.ctex"
+uid="uid://c0eu56vgh5phr"
+path.s3tc="res://.godot/imported/texture_07.png-7ca294d49c860c46f060d23c79eed47c.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -11,8 +11,8 @@ metadata={
 
 [deps]
 
-source_file="res://Example/DonutTop.png"
-dest_files=["res://.godot/imported/DonutTop.png-30a278ed1d70152bb61bb2ed06d2935d.s3tc.ctex"]
+source_file="res://addons/concave mesh slicer/Example/texture_07.png"
+dest_files=["res://.godot/imported/texture_07.png-7ca294d49c860c46f060d23c79eed47c.s3tc.ctex"]
 
 [params]
 
