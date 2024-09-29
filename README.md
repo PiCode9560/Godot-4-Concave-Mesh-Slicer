@@ -9,23 +9,24 @@ Demo video: https://www.youtube.com/watch?v=_yqTljJ0mW0&t=166s
 
 # Feature
 
-- slice convex, concave and meshes with holes.
-- if your mesh is too complicated, the cross-section surface sometimes not created.
-
+- Slice convex, concave, and meshes with holes.
+- Rigidbody slicing example scene
 # Installing
-Download the files and put the ConcaveMeshSlicer.gd into your project.
+Download the files from here or the [asset library](https://godotengine.org/asset-library/asset/1812) and put the addons folder into your project.
 
 # Using
-In your script that you want to slice meshes, create the MeshSlicer node.
+In your script that you want to slice meshes, create the MeshSlicer node and add it to the scene tree.
 
 ``` gdscript
 var meshSlicer = MeshSlicer.new()
+func _ready():
+  add_child(meshSlicer)
 ```
 
 To slice a mesh, use the slice_mesh function.
 
 ``` gdscript
-#Slice a mesh in half using Transform3D as the local position and direction. Return an array of the sliced meshes.
-#The cross-section material is positioned and rotated base on the Transform3D
-meshSlicer.slice_mesh(slice_transform:Transform3D,mesh:Mesh,cross_section_material:Material)
+# Slice a mesh in half using Transform3D as the local position and direction. 
+# Return an array of the sliced meshes. 
+var meshes = meshSlicer.slice_mesh(slice_transform:Transform3D,mesh:Mesh,cross_section_material:Material)
 ```
