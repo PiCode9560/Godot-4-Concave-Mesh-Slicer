@@ -9,16 +9,10 @@ const MOUSE_SENSITIVITY = 0.005
 @onready var camera = $Camera3D
 @onready var slicer = $Camera3D/Slicer
 
-var meshSlicer = MeshSlicer.new()
-
 var cross_section_material = preload("res://addons/concave mesh slicer/Example/cross_section_material.tres")
 
 # Get the gravity from the project settings to be synced with RigidBody nodes.
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
-
-func _ready() -> void:
-	# The Node need to be in a tree for it to worked.
-	add_child(meshSlicer)
 
 func _physics_process(delta):
 	# Add the gravity player.
@@ -40,8 +34,8 @@ func _physics_process(delta):
 		velocity.z = move_toward(velocity.z, 0, SPEED)
 
 	move_and_slide()
-	
-	
+
+
 	#push rigidbody
 	for i in get_slide_collision_count():
 		var collision = get_slide_collision(i)
@@ -52,14 +46,14 @@ func _physics_process(delta):
 				obj.apply_force(direction*10,collision.get_position(j)-obj.position)
 
 
-		
+
 	#slice rigidbody
 	if Input.is_action_just_pressed("left_mouse"):
 		#var bodies = $Camera3D/Slicer/Area3D.get_overlapping_bodies().duplicate()
 		for body in $Camera3D/Slicer/Area3D.get_overlapping_bodies().duplicate():
 			if body is RigidBody3D:
-				
-				
+
+
 				#The plane transform at the rigidbody local transform
 				var meshinstance = body.get_node("MeshInstance3D")
 				var Transform = Transform3D.IDENTITY
@@ -68,28 +62,23 @@ func _physics_process(delta):
 				Transform.basis.y = meshinstance.to_local((slicer.global_transform.basis.y+body.global_position))
 				Transform.basis.z = meshinstance.to_local((slicer.global_transform.basis.z+body.global_position))
 
-				
+
 
 				var collision = body.get_node("CollisionShape3D")
-				
-				
+
+
 				#Slice the mesh
-				var meshes = meshSlicer.slice_mesh(Transform,meshinstance.mesh,cross_section_material)
+				var meshes := MeshSlicer.slice_mesh(Transform,meshinstance.mesh,cross_section_material)
 
 				meshinstance.mesh = meshes[0]
-				
+
 				#generate collision
 				if len(meshes[0].get_faces()) > 2:
 					collision.shape = meshes[0].create_convex_shape()
 
-
-
-
-				
 				#adjust the rigidbody center of mass
 				body.center_of_mass_mode = 1
 				body.center_of_mass = body.to_local(meshinstance.to_global(calculate_center_of_mass(meshes[0])))
-
 
 				#recalculate mass
 				var volume1 = calculate_mesh_volume(meshes[0])
@@ -100,8 +89,8 @@ func _physics_process(delta):
 				var mass2 = body.mass * (volume2 / total_volume)
 
 				body.mass = mass1
-				
-				
+
+
 				#second half of the mesh
 				var body2 = body.duplicate()
 				$"../RigidBodys".add_child(body2)
@@ -109,7 +98,7 @@ func _physics_process(delta):
 				collision = body2.get_node("CollisionShape3D")
 				meshinstance.mesh = meshes[1]
 				body2.mass = mass2
-				
+
 				#generate collision
 				if len(meshes[1].get_faces()) > 2:
 					collision.shape = meshes[1].create_convex_shape()
@@ -122,7 +111,7 @@ func _physics_process(delta):
 					body2.queue_free()
 				if aabb.size.length() < 0.3:
 					body.queue_free()
-					
+
 				#adjust the rigidbody center of mass
 				body2.center_of_mass = body2.to_local(meshinstance.to_global(calculate_center_of_mass(meshes[1])))
 
@@ -137,15 +126,15 @@ func _input(event):
 			camera.rotation.x = clamp(camera.rotation.x,-PI/2, PI/2)
 	else:
 		Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
-	
-	
+
+
 	#rotate slicer plane
 	if Input.is_action_pressed("scroll_up"):
 		slicer.rotate_z(0.1)
 	if Input.is_action_pressed("scroll_down"):
-		slicer.rotate_z(-0.1)	
+		slicer.rotate_z(-0.1)
 
-				
+
 func calculate_center_of_mass(mesh:ArrayMesh):
 	#Not sure how well this work
 	var meshVolume = 0
@@ -158,7 +147,7 @@ func calculate_center_of_mass(mesh:ArrayMesh):
 		var volume = (Geometry3D.get_closest_point_to_segment_uncapped(v3,v1,v2).distance_to(v3)*v1.distance_to(v2))/2
 		meshVolume += volume
 		temp += center * volume
-	
+
 	if meshVolume == 0:
 		return Vector3.ZERO
 	return temp / meshVolume

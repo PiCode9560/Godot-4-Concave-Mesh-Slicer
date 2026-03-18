@@ -1,8 +1,8 @@
-[gd_scene load_steps=25 format=4 uid="uid://c2kujb7jwk8k5"]
+[gd_scene format=4 uid="uid://c2kujb7jwk8k5"]
 
 [ext_resource type="Texture2D" uid="uid://c0eu56vgh5phr" path="res://addons/concave mesh slicer/Example/texture_07.png" id="1_6jcef"]
 [ext_resource type="Texture2D" uid="uid://cogo2q4a2kxv8" path="res://icon.svg" id="1_pka2q"]
-[ext_resource type="Script" path="res://addons/concave mesh slicer/Example/Player.gd" id="2_x4fph"]
+[ext_resource type="Script" uid="uid://1j2ijwjhc0ds" path="res://addons/concave mesh slicer/Example/Player.gd" id="2_x4fph"]
 [ext_resource type="Texture2D" uid="uid://cbpc21w65hx8w" path="res://addons/concave mesh slicer/Example/DonutTop.png" id="3_k0hbk"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1n6te"]
@@ -140,102 +140,102 @@ material = SubResource("StandardMaterial3D_e5w2h")
 [sub_resource type="BoxShape3D" id="BoxShape3D_g26l8"]
 size = Vector3(1, 1, 0.01)
 
-[node name="SliceRigidbodyExample" type="Node3D"]
+[node name="SliceRigidbodyExample" type="Node3D" unique_id=129106172]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1757672687]
 environment = SubResource("Environment_6kkci")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=2071713269]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
 light_energy = 2.0
 light_indirect_energy = 2.0
 
-[node name="CSGBox3D" type="CSGBox3D" parent="."]
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=112221139]
 use_collision = true
 size = Vector3(100, 1, 100)
 material = SubResource("StandardMaterial3D_4b6lf")
 
-[node name="RigidBodys" type="Node3D" parent="."]
+[node name="RigidBodys" type="Node3D" parent="." unique_id=1234382353]
 
-[node name="RigidBody3D" type="RigidBody3D" parent="RigidBodys"]
+[node name="RigidBody3D" type="RigidBody3D" parent="RigidBodys" unique_id=1707695794]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.24919, -5.44261)
 mass = 2.0
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBodys/RigidBody3D"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBodys/RigidBody3D" unique_id=1855976107]
 mesh = SubResource("ArrayMesh_4wqkk")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBodys/RigidBody3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBodys/RigidBody3D" unique_id=231710256]
 shape = SubResource("ConvexPolygonShape3D_80bgp")
 
-[node name="RigidBody3D2" type="RigidBody3D" parent="RigidBodys"]
+[node name="RigidBody3D2" type="RigidBody3D" parent="RigidBodys" unique_id=1079500006]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.59366, 3.24919, 4.17539)
 mass = 2.0
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBodys/RigidBody3D2"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBodys/RigidBody3D2" unique_id=1936004208]
 mesh = SubResource("BoxMesh_0t5bb")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBodys/RigidBody3D2"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBodys/RigidBody3D2" unique_id=934616558]
 shape = SubResource("BoxShape3D_5se45")
 
-[node name="RigidBody3D3" type="RigidBody3D" parent="RigidBodys"]
+[node name="RigidBody3D3" type="RigidBody3D" parent="RigidBodys" unique_id=591664111]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.94421, 3.24919, 2.03142)
 mass = 2.0
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBodys/RigidBody3D3"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBodys/RigidBody3D3" unique_id=861457244]
 mesh = SubResource("BoxMesh_0t5bb")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBodys/RigidBody3D3"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBodys/RigidBody3D3" unique_id=1301237921]
 shape = SubResource("BoxShape3D_5se45")
 
-[node name="RigidBody3D4" type="RigidBody3D" parent="RigidBodys"]
+[node name="RigidBody3D4" type="RigidBody3D" parent="RigidBodys" unique_id=1879864537]
 transform = Transform3D(0.528246, 0, 0.849092, 0, 1, 0, -0.849092, 0, 0.528246, -6.11625, 3.24919, -1.84279)
 mass = 2.0
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBodys/RigidBody3D4"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBodys/RigidBody3D4" unique_id=769936223]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 mesh = SubResource("ArrayMesh_wkfh4")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBodys/RigidBody3D4"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBodys/RigidBody3D4" unique_id=808213399]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
 shape = SubResource("ConvexPolygonShape3D_gismp")
 
-[node name="RigidBody3D5" type="RigidBody3D" parent="RigidBodys"]
+[node name="RigidBody3D5" type="RigidBody3D" parent="RigidBodys" unique_id=1264778924]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.93103, 3.24919, -2.31331)
 mass = 2.0
 center_of_mass_mode = 1
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBodys/RigidBody3D5"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="RigidBodys/RigidBody3D5" unique_id=1458496811]
 mesh = SubResource("ArrayMesh_4wqkk")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBodys/RigidBody3D5"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBodys/RigidBody3D5" unique_id=711653554]
 shape = SubResource("ConvexPolygonShape3D_80bgp")
 
-[node name="Player" type="CharacterBody3D" parent="."]
+[node name="Player" type="CharacterBody3D" parent="." unique_id=1419747697]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.929426, 4.14093, 2.55431)
 floor_stop_on_slope = false
 floor_block_on_wall = false
 floor_max_angle = 0.349066
 script = ExtResource("2_x4fph")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Player"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=1001211141]
 shape = SubResource("CapsuleShape3D_drsii")
 
-[node name="Camera3D" type="Camera3D" parent="Player"]
+[node name="Camera3D" type="Camera3D" parent="Player" unique_id=1332983620]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.565756, 0)
 
-[node name="Slicer" type="Node3D" parent="Player/Camera3D"]
+[node name="Slicer" type="Node3D" parent="Player/Camera3D" unique_id=1532429821]
 transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.443504, -0.237657, -2.03263)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Player/Camera3D/Slicer"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Player/Camera3D/Slicer" unique_id=1225479949]
 mesh = SubResource("QuadMesh_xgqxu")
 skeleton = NodePath("../../..")
 
-[node name="Area3D" type="Area3D" parent="Player/Camera3D/Slicer"]
+[node name="Area3D" type="Area3D" parent="Player/Camera3D/Slicer" unique_id=1761485994]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Player/Camera3D/Slicer/Area3D"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player/Camera3D/Slicer/Area3D" unique_id=1303447999]
 shape = SubResource("BoxShape3D_g26l8")
 
-[node name="Label" type="Label" parent="."]
+[node name="Label" type="Label" parent="." unique_id=1965898554]
 offset_right = 205.0
 offset_bottom = 128.0
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)

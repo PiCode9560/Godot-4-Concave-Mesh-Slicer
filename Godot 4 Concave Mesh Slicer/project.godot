@@ -11,7 +11,8 @@ config_version=5
 [application]
 
 config/name="Godot 4 Concave Mesh Slicer"
-config/features=PackedStringArray("4.3", "Forward Plus")
+run/main_scene="uid://c2kujb7jwk8k5"
+config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"
 
 [dotnet]
@@ -60,8 +61,3 @@ scroll_down={
 "events": [Object(InputEventMouseButton,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"button_mask":0,"position":Vector2(0, 0),"global_position":Vector2(0, 0),"factor":1.0,"button_index":5,"canceled":false,"pressed":false,"double_click":false,"script":null)
 ]
 }
-
-[rendering]
-
-renderer/rendering_method="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"
