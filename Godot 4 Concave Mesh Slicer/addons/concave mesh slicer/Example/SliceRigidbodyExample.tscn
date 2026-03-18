@@ -242,8 +242,8 @@ theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 11
 text = "RigidBody slicing example.
 
-Use WASD to move.
-Right mouse to move head.
-Mouse scroll to rotate slicer.
-Left mouse to slice.
+WASD - move.
+Right mouse - move head.
+Mouse scroll - rotate slicer.
+Left mouse - slice.
 "

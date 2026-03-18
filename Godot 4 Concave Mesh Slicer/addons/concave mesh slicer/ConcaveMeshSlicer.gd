@@ -1,11 +1,14 @@
-extends Node
-
+## A class that contains functions to slice meshes in half.
 class_name MeshSlicer
+extends Node
 
 static var _root:Window = Engine.get_main_loop().root
 
-## Slice a mesh in half using Transform3D as the local position and direction.
-## Return an array of the sliced meshes.
+## Slice a mesh in half.
+## Returns an array containing the 2 half of the sliced mesh. [br] [br]
+##[code]slice_transform[/code] is the transform of a the slicing plane relative to the mesh, with the plane normal facing z axis. [br]
+##[code]mesh[/code] is the mesh that is going to be sliced. [br]
+##[code]cross_section_material[/code] is an optional parameter to set the material for the cross-section of the sliced meshes.
 static func slice_mesh(slice_transform: Transform3D, mesh: Mesh, cross_section_material: Material = null) -> Array[ArrayMesh]:
 	var combiner = CSGCombiner3D.new()
 

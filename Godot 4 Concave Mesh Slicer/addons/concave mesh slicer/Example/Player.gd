@@ -42,7 +42,6 @@ func _physics_process(delta):
 		for j in collision.get_collision_count():
 			var obj = collision.get_collider(j)
 			if obj is RigidBody3D:
-				print("COLLIDE ",direction)
 				obj.apply_force(direction*10,collision.get_position(j)-obj.position)
 
 
@@ -54,30 +53,24 @@ func _physics_process(delta):
 			if body is RigidBody3D:
 
 
-				#The plane transform at the rigidbody local transform
-				var meshinstance = body.get_node("MeshInstance3D")
-				var Transform = Transform3D.IDENTITY
-				Transform.origin = meshinstance.to_local((slicer.global_transform.origin))
-				Transform.basis.x = meshinstance.to_local((slicer.global_transform.basis.x+body.global_position))
-				Transform.basis.y = meshinstance.to_local((slicer.global_transform.basis.y+body.global_position))
-				Transform.basis.z = meshinstance.to_local((slicer.global_transform.basis.z+body.global_position))
-
-
-
-				var collision = body.get_node("CollisionShape3D")
+				#The convert the slicer's transform to be relative/local to the meshinstance.
+				var meshinstance:MeshInstance3D = body.get_node("MeshInstance3D")
+				var slice_transform = meshinstance.global_transform.affine_inverse() * slicer.global_transform
 
 
 				#Slice the mesh
-				var meshes := MeshSlicer.slice_mesh(Transform,meshinstance.mesh,cross_section_material)
-
+				var meshes := MeshSlicer.slice_mesh(slice_transform,meshinstance.mesh,cross_section_material)
 				meshinstance.mesh = meshes[0]
 
+
 				#generate collision
+				var collision = body.get_node("CollisionShape3D")
 				if len(meshes[0].get_faces()) > 2:
 					collision.shape = meshes[0].create_convex_shape()
 
+
 				#adjust the rigidbody center of mass
-				body.center_of_mass_mode = 1
+				body.center_of_mass_mode = RigidBody3D.CENTER_OF_MASS_MODE_CUSTOM
 				body.center_of_mass = body.to_local(meshinstance.to_global(calculate_center_of_mass(meshes[0])))
 
 				#recalculate mass
