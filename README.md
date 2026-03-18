@@ -1,6 +1,8 @@
-# Godot 4 concave mesh slicer
+# Godot 4 concave mesh slicer (v2.0-dev)
 
-Slicing Concave Mesh Into Half.
+Slice a concave mesh Into half.
+
+Based on godot CSG system.
 
 Demo video: https://www.youtube.com/watch?v=_yqTljJ0mW0&t=166s
 
@@ -14,19 +16,13 @@ Demo video: https://www.youtube.com/watch?v=_yqTljJ0mW0&t=166s
 # Installing
 Download the files from here or the [asset library](https://godotengine.org/asset-library/asset/1812) and put the addons folder into your project.
 
-# Using
-In your script that you want to slice meshes, create the MeshSlicer node and add it to the scene tree.
-
+# Usage
+To slice a mesh, call the `slice_mesh()` function from the `MeshSlicer` class, and it returns an array containing the 2 half of the sliced mesh.
 ``` gdscript
-var meshSlicer = MeshSlicer.new()
-func _ready():
-  add_child(meshSlicer)
+var meshes := MeshSlicer.slice_mesh(slice_transform:Transform3D, mesh:Mesh, cross_section_material:Material)
 ```
+`slice_transform` is the transform of a the slicing plane relative to the mesh, with the plane normal facing z axis.
 
-To slice a mesh, use the slice_mesh function.
+`mesh` is the mesh that is going to be sliced.
 
-``` gdscript
-# Slice a mesh in half using Transform3D as the local position and direction. 
-# Return an array of the sliced meshes. 
-var meshes = meshSlicer.slice_mesh(slice_transform:Transform3D,mesh:Mesh,cross_section_material:Material)
-```
+`cross_section_material` is an optional parameter to set the material for the cross-section of the sliced meshes.
