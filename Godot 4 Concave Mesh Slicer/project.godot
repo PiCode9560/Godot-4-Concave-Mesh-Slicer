@@ -13,7 +13,7 @@ config_version=5
 config/name="Godot 4 Concave Mesh Slicer"
 run/main_scene="uid://c2kujb7jwk8k5"
 config/features=PackedStringArray("4.6", "Forward Plus")
-config/icon="res://icon.svg"
+config/icon="uid://f08scjvu26ck"
 
 [dotnet]
 
