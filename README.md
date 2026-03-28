@@ -1,4 +1,4 @@
-# Godot 4 concave mesh slicer (v2.0-dev)
+# Godot 4 concave mesh slicer (v2.0-stable)
 
 Slice a concave mesh Into half.
 
